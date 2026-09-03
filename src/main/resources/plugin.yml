@@ -1,0 +1,51 @@
+name: NoBlitz
+version: '${version}'
+main: de.noblitz.NoBlitzPlugin
+api-version: '1.21'
+author: Antigravity
+description: High-performance, customizable lightning and thunderstorm protection plugin for Minecraft.
+website: https://github.com/noblitz
+
+commands:
+  noblitz:
+    description: Main command for NoBlitz plugin management.
+    permission: noblitz.use
+    aliases: [nb, antilblitz, nolightning]
+    usage: /<command> [help|status|reload|toggle|strike|clearthunder|resetstats]
+
+permissions:
+  noblitz.use:
+    description: Allows using basic NoBlitz info commands.
+    default: true
+  noblitz.admin:
+    description: Full administrative access to NoBlitz.
+    default: op
+    children:
+      noblitz.reload: true
+      noblitz.toggle: true
+      noblitz.strike: true
+      noblitz.status: true
+      noblitz.clearthunder: true
+      noblitz.resetstats: true
+      noblitz.bypass: true
+  noblitz.reload:
+    description: Allows reloading the NoBlitz configuration.
+    default: op
+  noblitz.toggle:
+    description: Allows toggling protection in worlds.
+    default: op
+  noblitz.strike:
+    description: Allows striking lightning on players/locations.
+    default: op
+  noblitz.status:
+    description: Allows viewing status and statistics.
+    default: op
+  noblitz.clearthunder:
+    description: Allows clearing thunder weather.
+    default: op
+  noblitz.resetstats:
+    description: Allows resetting strike statistics.
+    default: op
+  noblitz.bypass:
+    description: Allows bypassing trident channeling restrictions.
+    default: op

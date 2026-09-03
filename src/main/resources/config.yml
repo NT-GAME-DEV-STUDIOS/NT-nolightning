@@ -1,0 +1,94 @@
+# ============================================================================== #
+#                                 NoBlitz Config                                 #
+#                     Lightning and Thunderstorm Protection                      #
+# ============================================================================== #
+
+# Master switch for the plugin
+enabled: true
+
+# Enable debug messages in server console
+debug: false
+
+# ------------------------------------------------------------------------------ #
+# Lightning Strike Cancellation Rules
+# ------------------------------------------------------------------------------ #
+strike-rules:
+  # Completely cancel lightning strikes before they can spawn
+  cancel-all-lightning: true
+
+  # If cancel-all-lightning is false, you can filter by specific causes:
+  cancel-causes:
+    weather: true      # Natural lightning during thunderstorms
+    trident: false     # Trident with Channeling enchantment (allow player combat)
+    command: false     # Lightning summoned via commands (e.g. /summon lightning_bolt)
+    custom: false      # Lightning triggered by other plugins
+
+  # Visual-only mode: When true, if lightning strikes, it converts into a visual-only
+  # effect (no fire, no block break, no entity damage, no mob transformations)
+  visual-only: false
+
+# ------------------------------------------------------------------------------ #
+# Side Effect Protections (Active even if lightning strike itself isn't cancelled)
+# ------------------------------------------------------------------------------ #
+protection:
+  # Prevent lightning from creating fire on blocks
+  prevent-fire: true
+
+  # Prevent lightning from damaging any entities (Players, Animals, Monsters)
+  prevent-entity-damage: true
+
+  # Specifically protect dropped items and item frames from being destroyed
+  prevent-item-destruction: true
+
+  # Prevent lightning from transforming mobs:
+  # - Creepers -> Charged Creepers
+  # - Villagers -> Witches
+  # - Pigs -> Zombified Piglins
+  # - Mooshrooms -> Brown/Red Mooshrooms
+  prevent-mob-transformations: true
+
+  # Mute or suppress thunder and lightning sound effects (Paper/Purpur)
+  mute-sound: false
+
+# ------------------------------------------------------------------------------ #
+# Weather Management
+# ------------------------------------------------------------------------------ #
+weather:
+  # Automatically cancel thunderstorm weather when it starts
+  prevent-thunderstorms: false
+
+  # Automatically clear rain whenever weather changes (keeps world permanently clear)
+  always-clear-weather: false
+
+# ------------------------------------------------------------------------------ #
+# World Filtering
+# Modes:
+#   - ALL: Protect all loaded worlds
+#   - WHITELIST: Protect ONLY worlds in the list below
+#   - BLACKLIST: Protect all worlds EXCEPT those in the list below
+# ------------------------------------------------------------------------------ #
+worlds:
+  mode: ALL
+  list:
+    - world
+    - world_nether
+    - world_the_end
+
+# ------------------------------------------------------------------------------ #
+# Messages & Localization
+# Supports MiniMessage (<gold>, <green>, <bold>) and Legacy color codes (&a, &b, etc.)
+# ------------------------------------------------------------------------------ #
+messages:
+  prefix: "&8[&bNoBlitz&8] &r"
+  no-permission: "&cDu hast keine Berechtigung für diesen Befehl!"
+  reload-success: "&aKonfiguration wurde erfolgreich neu geladen! &7({time}ms)"
+  toggle-enabled: "&7Blitzschutz für Welt &b{world} &awurde aktiviert&7."
+  toggle-disabled: "&7Blitzschutz für Welt &b{world} &cwurde deaktiviert&7."
+  strike-success: "&7Blitz auf &b{target} &7beschworen (Visual Only: &e{visual}&7)."
+  strike-player-not-found: "&cSpieler &e{target} &cwurde nicht gefunden."
+  clearthunder-success: "&aGewitter in Welt &b{world} &aerfolgreich geklärt!"
+  resetstats-success: "&aStatistiken wurden erfolgreich zurückgesetzt."
+  status-header: "&8=== &bNoBlitz Status &8==="
+  status-global: "&7Plugin-Status: {status} &7| Modus: &e{mode}"
+  status-world: "&7Welt &b{world}&7: {world_status}"
+  status-stats: "&7Blockierte Blitze: &e{strikes} &7| Verhinderte Brände: &e{fires} &7| Geschützte Mobs: &e{mobs}"
