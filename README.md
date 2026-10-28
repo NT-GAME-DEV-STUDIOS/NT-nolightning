@@ -1,4 +1,12 @@
-# NT-noblitz ⚡ - Minecraft Plugin
+# NT-nolightning ⚡ - Minecraft Plugin
+
+[![Language: English](https://img.shields.io/badge/Language-English-blue.svg)](#)
+[![Deutsch](https://img.shields.io/badge/Sprache-Deutsch-orange.svg)](README_DE.md)
+[![Platform: Paper / Purpur / Spigot](https://img.shields.io/badge/Platform-Paper%20%7C%20Purpur%20%7C%20Spigot-green.svg)](#)
+[![Minecraft: 1.8.8 - 1.21.4+](https://img.shields.io/badge/Minecraft-1.8.8--1.21.4%2B-brightgreen.svg)](#)
+[![Java: 8+](https://img.shields.io/badge/Java-8%2B-red.svg)](#)
+[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C.svg?logo=paypal&logoColor=white)](https://paypal.me/niktrick)
+[![Support on Ko-fi](https://img.shields.io/badge/Support-Ko--fi-FF5E5B.svg?logo=kofi&logoColor=white)](https://ko-fi.com/niktrick)
 
 [🇩🇪 Zur deutschen Version wechseln](README_DE.md) | [🇬🇧 English Version](README.md)
 
@@ -103,4 +111,13 @@ Built using Gradle (targeting Java 8 bytecode):
 .\gradlew.bat jar
 ```
 The compiled JAR will be located at:
-- `build/libs/NoBlitz-1.0.0.jar`
+- `build/libs/NT-nolightning-1.0.0.jar`
+
+---
+
+## 💖 Support & Donations
+
+If you find this plugin helpful for your server network, you can support future development and maintenance:
+- [PayPal Donation](https://paypal.me/niktrick)
+- [Support on Ko-fi](https://ko-fi.com/niktrick)
+- Donations are voluntary and directly fund continuous updates and multi-version compatibility!

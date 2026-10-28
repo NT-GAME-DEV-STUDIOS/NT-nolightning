@@ -1,5 +1,5 @@
 # ============================================================================== #
-#                                NT-noblitz Config                               #
+#                             NT-nolightning Config                             #
 #                     Lightning and Thunderstorm Protection                      #
 # ============================================================================== #
 
@@ -7,8 +7,12 @@
 enabled: true
 
 # Language setting: "en" (English) or "de" (German)
-# Can also be changed in-game via /noblitz lang <en|de>
+# Can also be changed in-game via /nolightning lang <en|de>
 language: en
+
+# Donation link to support development
+# Modrinth & EULA compliant optional voluntary support
+donation-url: "https://paypal.me/niktrick"
 
 # Enable debug messages in server console
 debug: false

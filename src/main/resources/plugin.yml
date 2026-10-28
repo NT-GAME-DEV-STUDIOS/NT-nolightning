@@ -1,16 +1,21 @@
-name: NT-noblitz
+name: NT-nolightning
 version: '${version}'
 main: de.noblitz.NoBlitzPlugin
 author: Antigravity
 description: High-performance, customizable lightning and thunderstorm protection plugin for Minecraft.
-website: https://github.com/NT-GAME-DEV-STUDIOS/NT-noblitz
+website: https://github.com/NT-GAME-DEV-STUDIOS/NT-nolightning
 
 commands:
-  noblitz:
-    description: Main command for NoBlitz plugin management.
+  nolightning:
+    description: Main command for NT-nolightning plugin management.
     permission: noblitz.use
-    aliases: [nb, antilblitz, nolightning]
-    usage: /<command> [help|status|reload|toggle|strike|clearthunder|resetstats]
+    aliases: [noblitz, nb, antilblitz, nl]
+    usage: /<command> [help|status|reload|toggle|strike|clearthunder|resetstats|donate]
+  noblitz:
+    description: Legacy alias for NT-nolightning plugin management.
+    permission: noblitz.use
+    aliases: []
+    usage: /<command> [help|status|reload|toggle|strike|clearthunder|resetstats|donate]
 
 permissions:
   noblitz.use:
