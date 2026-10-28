@@ -45,6 +45,10 @@ public class NoBlitzCommand implements TabExecutor {
             case "reload":
                 handleReload(sender);
                 break;
+            case "lang":
+            case "language":
+                handleLanguage(sender, args);
+                break;
             case "toggle":
                 handleToggle(sender, args);
                 break;
@@ -59,36 +63,86 @@ public class NoBlitzCommand implements TabExecutor {
                 handleResetStats(sender);
                 break;
             default:
-                MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cUnbekannter Befehl. Nutze &e/" + label + " help &cfür Hilfe.");
+                String unknownMsg = config.getMessage("unknown-command", "&cUnbekannter Befehl. Nutze &e/{label} help &cfür Hilfe.")
+                        .replace("{label}", label);
+                MessageUtils.sendPrefixed(sender, config.getPrefix(), unknownMsg);
                 break;
         }
         return true;
     }
 
     private void sendHelp(CommandSender sender, String label) {
+        boolean isDe = "de".equalsIgnoreCase(config.getLanguage());
         MessageUtils.send(sender, "&8&m-----------------&r &bNoBlitz &8v" + plugin.getDescription().getVersion() + " &8&m-----------------");
-        MessageUtils.send(sender, "&b/" + label + " help &7- Zeigt diese Hilfeseite");
-        MessageUtils.send(sender, "&b/" + label + " status &7- Zeigt Plugin-Status und Statistiken");
-        if (sender.hasPermission("noblitz.reload")) {
-            MessageUtils.send(sender, "&b/" + label + " reload &7- Lädt die Konfiguration neu");
-        }
-        if (sender.hasPermission("noblitz.toggle")) {
-            MessageUtils.send(sender, "&b/" + label + " toggle [welt] &7- Schaltet Blitzschutz für eine Welt um");
-        }
-        if (sender.hasPermission("noblitz.strike")) {
-            MessageUtils.send(sender, "&b/" + label + " strike <spieler> [visual:true/false] &7- Beschwört einen Blitz");
-        }
-        if (sender.hasPermission("noblitz.clearthunder")) {
-            MessageUtils.send(sender, "&b/" + label + " clearthunder [welt] &7- Beendet Gewitter und Sturm");
-        }
-        if (sender.hasPermission("noblitz.resetstats")) {
-            MessageUtils.send(sender, "&b/" + label + " resetstats &7- Setzt Blockierungs-Statistiken zurück");
+        if (isDe) {
+            MessageUtils.send(sender, "&b/" + label + " help &7- Zeigt diese Hilfeseite");
+            MessageUtils.send(sender, "&b/" + label + " status &7- Zeigt Plugin-Status und Statistiken");
+            if (sender.hasPermission("noblitz.reload") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " reload &7- Lädt die Konfiguration neu");
+                MessageUtils.send(sender, "&b/" + label + " lang <de|en> &7- Ändert die Sprache (Deutsch/Englisch)");
+            }
+            if (sender.hasPermission("noblitz.toggle") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " toggle [welt] &7- Schaltet Blitzschutz für eine Welt um");
+            }
+            if (sender.hasPermission("noblitz.strike") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " strike <spieler> [visual:true/false] &7- Beschwört einen Blitz");
+            }
+            if (sender.hasPermission("noblitz.clearthunder") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " clearthunder [welt] &7- Beendet Gewitter und Sturm");
+            }
+            if (sender.hasPermission("noblitz.resetstats") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " resetstats &7- Setzt Blockierungs-Statistiken zurück");
+            }
+        } else {
+            MessageUtils.send(sender, "&b/" + label + " help &7- Shows this help page");
+            MessageUtils.send(sender, "&b/" + label + " status &7- Shows plugin status and statistics");
+            if (sender.hasPermission("noblitz.reload") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " reload &7- Reloads configuration");
+                MessageUtils.send(sender, "&b/" + label + " lang <de|en> &7- Changes language (German/English)");
+            }
+            if (sender.hasPermission("noblitz.toggle") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " toggle [world] &7- Toggles lightning protection for a world");
+            }
+            if (sender.hasPermission("noblitz.strike") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " strike <player> [visual:true/false] &7- Summons lightning strike");
+            }
+            if (sender.hasPermission("noblitz.clearthunder") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " clearthunder [world] &7- Clears storm and thunder");
+            }
+            if (sender.hasPermission("noblitz.resetstats") || sender.isOp()) {
+                MessageUtils.send(sender, "&b/" + label + " resetstats &7- Resets blocking statistics");
+            }
         }
         MessageUtils.send(sender, "&8&m---------------------------------------------------");
     }
 
+    private void handleLanguage(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("noblitz.reload") && !sender.isOp()) {
+            sendNoPerm(sender);
+            return;
+        }
+
+        if (args.length < 2) {
+            boolean isDe = "de".equalsIgnoreCase(config.getLanguage());
+            MessageUtils.sendPrefixed(sender, config.getPrefix(), isDe
+                    ? "&eAktuelle Sprache: &bDeutsch&e. Nutze &b/noblitz lang <de|en>&e."
+                    : "&eCurrent language: &bEnglish&e. Use &b/noblitz lang <de|en>&e.");
+            return;
+        }
+
+        String target = args[1].toLowerCase(Locale.ROOT);
+        if (!target.equals("de") && !target.equals("en")) {
+            MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cUngültige Sprache / Invalid language: &e" + target + " &7(de / en)");
+            return;
+        }
+
+        config.setLanguage(target);
+        String msg = config.getMessage("lang-changed", "&aLanguage successfully updated!");
+        MessageUtils.sendPrefixed(sender, config.getPrefix(), msg);
+    }
+
     private void handleStatus(CommandSender sender) {
-        if (!sender.hasPermission("noblitz.status") && !sender.hasPermission("noblitz.use")) {
+        if (!sender.hasPermission("noblitz.status") && !sender.hasPermission("noblitz.use") && !sender.isOp()) {
             sendNoPerm(sender);
             return;
         }
@@ -96,10 +150,11 @@ public class NoBlitzCommand implements TabExecutor {
         World senderWorld = (sender instanceof Player) ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0);
         boolean isProtected = config.isWorldProtected(senderWorld);
 
-        MessageUtils.send(sender, config.getMessage("status-header", "&8=== &bNoBlitz Status &8==="));
+        boolean isDe = "de".equalsIgnoreCase(config.getLanguage());
+        String globalStatus = config.isEnabled() ? (isDe ? "&aAktiv" : "&aActive") : (isDe ? "&cDeaktiviert" : "&cDisabled");
+        String worldStatus = isProtected ? (isDe ? "&aGeschützt" : "&aProtected") : (isDe ? "&cUngeschützt" : "&cUnprotected");
 
-        String globalStatus = config.isEnabled() ? "&aAktiv" : "&cDeaktiviert";
-        String worldStatus = isProtected ? "&aGeschützt" : "&cUngeschützt";
+        MessageUtils.send(sender, config.getMessage("status-header", "&8=== &bNoBlitz Status &8==="));
 
         String msgGlobal = config.getMessage("status-global", "&7Plugin-Status: {status} &7| Modus: &e{mode}")
                 .replace("{status}", globalStatus)
@@ -111,10 +166,17 @@ public class NoBlitzCommand implements TabExecutor {
                 .replace("{world_status}", worldStatus);
         MessageUtils.send(sender, msgWorld);
 
-        MessageUtils.send(sender, "&7Regeln: &7Alle Blitze blockieren: &e" + config.isCancelAllLightning() +
-                " &7| Nur Visual: &e" + config.isVisualOnly() +
-                " &7| Feuer verhindern: &e" + config.isPreventFire() +
-                " &7| Schaden verhindern: &e" + config.isPreventEntityDamage());
+        if (isDe) {
+            MessageUtils.send(sender, "&7Regeln: &7Alle Blitze blockieren: &e" + config.isCancelAllLightning() +
+                    " &7| Nur Visual: &e" + config.isVisualOnly() +
+                    " &7| Feuer verhindern: &e" + config.isPreventFire() +
+                    " &7| Schaden verhindern: &e" + config.isPreventEntityDamage());
+        } else {
+            MessageUtils.send(sender, "&7Rules: &7Cancel all strikes: &e" + config.isCancelAllLightning() +
+                    " &7| Visual only: &e" + config.isVisualOnly() +
+                    " &7| Prevent fire: &e" + config.isPreventFire() +
+                    " &7| Prevent damage: &e" + config.isPreventEntityDamage());
+        }
 
         String msgStats = config.getMessage("status-stats", "&7Blockierte Blitze: &e{strikes} &7| Verhinderte Brände: &e{fires} &7| Geschützte Mobs: &e{mobs}")
                 .replace("{strikes}", String.valueOf(stats.getBlockedStrikes()))
@@ -124,7 +186,7 @@ public class NoBlitzCommand implements TabExecutor {
     }
 
     private void handleReload(CommandSender sender) {
-        if (!sender.hasPermission("noblitz.reload")) {
+        if (!sender.hasPermission("noblitz.reload") && !sender.isOp()) {
             sendNoPerm(sender);
             return;
         }
@@ -139,7 +201,7 @@ public class NoBlitzCommand implements TabExecutor {
     }
 
     private void handleToggle(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("noblitz.toggle")) {
+        if (!sender.hasPermission("noblitz.toggle") && !sender.isOp()) {
             sendNoPerm(sender);
             return;
         }
@@ -148,13 +210,13 @@ public class NoBlitzCommand implements TabExecutor {
         if (args.length >= 2) {
             targetWorld = Bukkit.getWorld(args[1]);
             if (targetWorld == null) {
-                MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cWelt &e" + args[1] + " &cwurde nicht gefunden!");
+                MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cWelt/World &e" + args[1] + " &cnot found!");
                 return;
             }
         } else if (sender instanceof Player) {
             targetWorld = ((Player) sender).getWorld();
         } else {
-            MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cBitte gib eine Welt an: /noblitz toggle <welt>");
+            MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cUsage: /noblitz toggle <world>");
             return;
         }
 
@@ -167,19 +229,19 @@ public class NoBlitzCommand implements TabExecutor {
     }
 
     private void handleStrike(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("noblitz.strike")) {
+        if (!sender.hasPermission("noblitz.strike") && !sender.isOp()) {
             sendNoPerm(sender);
             return;
         }
 
         if (args.length < 2) {
-            MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cVerwendung: /noblitz strike <spieler> [visual:true/false]");
+            MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cUsage: /noblitz strike <player> [visual:true/false]");
             return;
         }
 
         Player target = Bukkit.getPlayer(args[1]);
         if (target == null || !target.isOnline()) {
-            String msg = config.getMessage("strike-player-not-found", "&cSpieler &e{target} &cwurde nicht gefunden.")
+            String msg = config.getMessage("strike-player-not-found", "&cPlayer &e{target} &cnot found.")
                     .replace("{target}", args[1]);
             MessageUtils.sendPrefixed(sender, config.getPrefix(), msg);
             return;
@@ -203,7 +265,7 @@ public class NoBlitzCommand implements TabExecutor {
     }
 
     private void handleClearThunder(CommandSender sender, String[] args) {
-        if (!sender.hasPermission("noblitz.clearthunder")) {
+        if (!sender.hasPermission("noblitz.clearthunder") && !sender.isOp()) {
             sendNoPerm(sender);
             return;
         }
@@ -212,7 +274,7 @@ public class NoBlitzCommand implements TabExecutor {
         if (args.length >= 2) {
             targetWorld = Bukkit.getWorld(args[1]);
             if (targetWorld == null) {
-                MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cWelt &e" + args[1] + " &cwurde nicht gefunden!");
+                MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cWorld &e" + args[1] + " &cnot found!");
                 return;
             }
         } else if (sender instanceof Player) {
@@ -225,13 +287,13 @@ public class NoBlitzCommand implements TabExecutor {
         targetWorld.setStorm(false);
         targetWorld.setWeatherDuration(6000);
 
-        String msg = config.getMessage("clearthunder-success", "&aGewitter in Welt &b{world} &aerfolgreich geklärt!")
+        String msg = config.getMessage("clearthunder-success", "&aThunderstorm in world &b{world} &acleared!")
                 .replace("{world}", targetWorld.getName());
         MessageUtils.sendPrefixed(sender, config.getPrefix(), msg);
     }
 
     private void handleResetStats(CommandSender sender) {
-        if (!sender.hasPermission("noblitz.resetstats")) {
+        if (!sender.hasPermission("noblitz.resetstats") && !sender.isOp()) {
             sendNoPerm(sender);
             return;
         }
@@ -242,36 +304,43 @@ public class NoBlitzCommand implements TabExecutor {
     }
 
     private void sendNoPerm(CommandSender sender) {
-        String msg = config.getMessage("no-permission", "&cDu hast keine Berechtigung für diesen Befehl!");
+        String msg = config.getMessage("no-permission", "&cYou do not have permission to execute this command!");
         MessageUtils.sendPrefixed(sender, config.getPrefix(), msg);
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
-            List<String> sub = new ArrayList<>();
+            List<String> sub = new ArrayList<String>();
             sub.add("help");
             sub.add("status");
-            if (sender.hasPermission("noblitz.reload")) sub.add("reload");
-            if (sender.hasPermission("noblitz.toggle")) sub.add("toggle");
-            if (sender.hasPermission("noblitz.strike")) sub.add("strike");
-            if (sender.hasPermission("noblitz.clearthunder")) sub.add("clearthunder");
-            if (sender.hasPermission("noblitz.resetstats")) sub.add("resetstats");
+            if (sender.hasPermission("noblitz.reload") || sender.isOp()) {
+                sub.add("reload");
+                sub.add("lang");
+                sub.add("language");
+            }
+            if (sender.hasPermission("noblitz.toggle") || sender.isOp()) sub.add("toggle");
+            if (sender.hasPermission("noblitz.strike") || sender.isOp()) sub.add("strike");
+            if (sender.hasPermission("noblitz.clearthunder") || sender.isOp()) sub.add("clearthunder");
+            if (sender.hasPermission("noblitz.resetstats") || sender.isOp()) sub.add("resetstats");
             return filterStartingWith(args[0], sub);
         }
 
         if (args.length == 2) {
             String sub = args[0].toLowerCase(Locale.ROOT);
-            if ((sub.equals("toggle") && sender.hasPermission("noblitz.toggle")) ||
-                    (sub.equals("clearthunder") && sender.hasPermission("noblitz.clearthunder"))) {
-                List<String> worlds = new ArrayList<>();
+            if ((sub.equals("lang") || sub.equals("language")) && (sender.hasPermission("noblitz.reload") || sender.isOp())) {
+                return filterStartingWith(args[1], Arrays.asList("de", "en"));
+            }
+            if ((sub.equals("toggle") && (sender.hasPermission("noblitz.toggle") || sender.isOp())) ||
+                    (sub.equals("clearthunder") && (sender.hasPermission("noblitz.clearthunder") || sender.isOp()))) {
+                List<String> worlds = new ArrayList<String>();
                 for (World w : Bukkit.getWorlds()) {
                     worlds.add(w.getName());
                 }
                 return filterStartingWith(args[1], worlds);
             }
-            if (sub.equals("strike") && sender.hasPermission("noblitz.strike")) {
-                List<String> players = new ArrayList<>();
+            if (sub.equals("strike") && (sender.hasPermission("noblitz.strike") || sender.isOp())) {
+                List<String> players = new ArrayList<String>();
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     players.add(p.getName());
                 }
@@ -279,7 +348,7 @@ public class NoBlitzCommand implements TabExecutor {
             }
         }
 
-        if (args.length == 3 && args[0].equalsIgnoreCase("strike") && sender.hasPermission("noblitz.strike")) {
+        if (args.length == 3 && args[0].equalsIgnoreCase("strike") && (sender.hasPermission("noblitz.strike") || sender.isOp())) {
             return filterStartingWith(args[2], Arrays.asList("true", "false"));
         }
 
@@ -288,7 +357,7 @@ public class NoBlitzCommand implements TabExecutor {
 
     private List<String> filterStartingWith(String prefix, List<String> list) {
         String lower = prefix.toLowerCase(Locale.ROOT);
-        List<String> result = new ArrayList<>();
+        List<String> result = new ArrayList<String>();
         for (String item : list) {
             if (item.toLowerCase(Locale.ROOT).startsWith(lower)) {
                 result.add(item);

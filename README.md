@@ -1,68 +1,79 @@
 # NoBlitz ⚡ - Minecraft Plugin
 
-Ein modernes, performantes und voll konfigurierbares Paper/Purpur/Spigot-Plugin (Minecraft 1.20 - 1.21.4+) zur Steuerung und Verhinderung von Blitzen, Gewitterstürmen und deren Nebeneffekten.
+[🇩🇪 Zur deutschen Version wechseln](README_DE.md) | [🇬🇧 English Version](README.md)
+
+A modern, high-performance, and fully configurable Paper / Purpur / Spigot plugin (Minecraft 1.8.8 – 1.21.4+) for controlling and preventing lightning strikes, thunderstorms, and all their side effects.
 
 ---
 
 ## 🚀 Features
 
-- **Vollständige Blitz-Blockierung**:
-  - Verhindert natürliche Blitze bei Gewitter.
-  - Filter nach Ursache (`WEATHER`, `TRIDENT`, `COMMAND`, `CUSTOM`).
-  - **Visual-Only-Modus**: Wandelt Blitze optional in rein visuelle Effekte um (kein Feuer, keine Zerstörung, kein Schaden).
-- **Schutz vor Nebeneffekten**:
-  - **Brandschutz**: Verhindert, dass Blitze Blöcke in Brand setzen (`BlockIgniteEvent`).
-  - **Schadensschutz**: Schützt Spieler, friedliche Tiere und Monster vor Blitzschaden.
-  - **Item-Schutz**: Verhindert, dass fallengelassene Items oder Item-Frames verbrannt werden.
-  - **Mob-Transformationsschutz**:
-    - Verhindert geladene Creeper (`CreeperPowerEvent`).
-    - Verhindert Hexen-Transformation bei Dorfbewohnern (`EntityTransformEvent`).
-    - Verhindert Zombified Piglins bei Schweinen (`PigZapEvent`).
-    - Verhindert Pilzkuh-Farbwechsel.
-- **Wetter-Management**:
-  - Automatisches Abbrechen von Gewittern (`ThunderChangeEvent`).
-  - Optional: Dauerhaft schönes Wetter (`always-clear-weather`).
-- **Flexible Welten-Verwaltung**:
-  - Modi: `ALL` (alle Welten), `WHITELIST` (nur gelistete Welten), `BLACKLIST` (alle außer gelistete Welten).
-  - Runtime-Toggle pro Welt im laufenden Spielbetrieb ohne Server-Neustart.
-- **Live-Statistiken**:
-  - Zählt blockierte Blitze, verhinderte Brände und gerettete Mobs in Echtzeit.
-- **Moderne Textformatierung**:
-  - Volle Unterstützung für Hex-Farben (`&#RRGGBB`), Legacy-Farbcodes (`&a`, `&b`, etc.) und Adventure MiniMessage.
+- **Complete Lightning Strike Prevention**:
+  - Automatically cancels natural lightning strikes during thunderstorms.
+  - Granular cause filtering (`WEATHER`, `TRIDENT`, `COMMAND`, `CUSTOM`).
+  - **Visual-Only Mode**: Optionally converts lightning strikes into harmless visual effects (no fire, no block breaking, no entity damage, no mob transformations).
+- **Comprehensive Side Effect Protections**:
+  - **Fire Protection**: Stops lightning from igniting blocks (`BlockIgniteEvent`).
+  - **Damage Protection**: Shields players, peaceful animals, and monsters from lightning damage.
+  - **Item Protection**: Prevents dropped items and item frames from being vaporized.
+  - **Mob Transformation Guard**:
+    - Prevents Charged Creepers (`CreeperPowerEvent`).
+    - Prevents Villagers from transforming into Witches (`EntityTransformEvent`).
+    - Prevents Pigs from becoming Zombified Piglins (`PigZapEvent`).
+    - Prevents Mooshroom color swapping.
+- **Weather Management**:
+  - Automatically suppresses thunderstorms (`ThunderChangeEvent`).
+  - Optional: Keep weather permanently clear (`always-clear-weather`).
+- **World Management**:
+  - Modes: `ALL` (protect all worlds), `WHITELIST` (only specified worlds), `BLACKLIST` (all except specified).
+  - Runtime toggle per world without server restarts.
+- **Bilingual & Multi-Language Support**:
+  - Configurable language in `config.yml`: `language: en` or `language: de`.
+  - In-game language switching: `/noblitz lang <de|en>`.
+- **Live Statistics**:
+  - Tracks blocked strikes, prevented fires, and protected mobs in real time.
+- **Universal Cross-Version Support**:
+  - Compiled with Java 8 bytecode (`major version: 52`). Compatible with Minecraft 1.8.8 through 1.21.4+ on Spigot, Paper, and Purpur.
 
 ---
 
-## 📜 Befehle & Berechtigungen
+## 📜 Commands & Permissions
 
-| Befehl | Berechtigung | Beschreibung |
+| Command | Permission | Description |
 | :--- | :--- | :--- |
-| `/noblitz help` | `noblitz.use` | Zeigt die Übersicht aller Befehle. |
-| `/noblitz status` | `noblitz.status` | Zeigt den aktuellen Schutzstatus und Statistiken. |
-| `/noblitz reload` | `noblitz.reload` | Lädt die `config.yml` neu. |
-| `/noblitz toggle [welt]` | `noblitz.toggle` | Schaltet den Schutz für die angegebene (oder aktuelle) Welt um. |
-| `/noblitz strike <spieler> [visual]` | `noblitz.strike` | Beschwört einen Blitz auf einen Spieler (optional nur visuell). |
-| `/noblitz clearthunder [welt]` | `noblitz.clearthunder` | Beendet Gewitter und Sturm sofort. |
-| `/noblitz resetstats` | `noblitz.resetstats` | Setzt den Zähler für blockierte Blitze/Brände zurück. |
+| `/noblitz help` | `noblitz.use` | Displays plugin command overview. |
+| `/noblitz status` | `noblitz.status` | Displays protection status and strike statistics. |
+| `/noblitz reload` | `noblitz.reload` | Reloads `config.yml`. |
+| `/noblitz lang <de\|en>` | `noblitz.reload` | Changes plugin language live. |
+| `/noblitz toggle [world]` | `noblitz.toggle` | Toggles lightning protection for the world. |
+| `/noblitz strike <player> [visual]` | `noblitz.strike` | Summons lightning on a player (optionally visual only). |
+| `/noblitz clearthunder [world]` | `noblitz.clearthunder` | Immediately clears thunderstorms and rain. |
+| `/noblitz resetstats` | `noblitz.resetstats` | Resets blocked strike and fire statistics. |
 
-**Admin-Recht**: `noblitz.admin` (besitzt standardmäßig alle Rechte).  
-**Bypass-Recht**: `noblitz.bypass` (erlaubt Spielern mit Channeling-Dreizack Blitze trotz Schutz zu rufen, falls konfiguriert).
+**Admin Permission**: `noblitz.admin` (granted to OPs by default).  
+**Bypass Permission**: `noblitz.bypass` (allows players with Channeling tridents to strike even when protected, if configured).
 
 ---
 
-## ⚙️ Konfiguration (`config.yml`)
+## ⚙️ Configuration (`config.yml`)
 
 ```yaml
 enabled: true
+
+# Language: "en" (English) or "de" (German)
+# Can also be switched live via /noblitz lang <de|en>
+language: en
+
 debug: false
 
 strike-rules:
   cancel-all-lightning: true
   cancel-causes:
-    weather: true      # Blitze durch Gewitter blockieren
-    trident: false     # Channeling-Dreizack erlauben
-    command: false     # /summon lightning_bolt erlauben
-    custom: false      # Blitze durch andere Plugins
-  visual-only: false   # Blitze nur als Effekt anzeigen
+    weather: true      # Block natural weather lightning
+    trident: false     # Allow Channeling tridents
+    command: false     # Allow /summon lightning_bolt
+    custom: false      # Lightning triggered by other plugins
+  visual-only: false   # Turn lightning into pure visual effects
 
 protection:
   prevent-fire: true
@@ -76,7 +87,7 @@ weather:
   always-clear-weather: false
 
 worlds:
-  mode: ALL # ALL, WHITELIST oder BLACKLIST
+  mode: ALL # ALL, WHITELIST, or BLACKLIST
   list:
     - world
     - world_nether
@@ -85,12 +96,11 @@ worlds:
 
 ---
 
-## 📦 Kompilierung
+## 📦 Building
 
-Das Plugin wird mit Gradle gebaut:
+Built using Gradle (targeting Java 8 bytecode):
 ```bash
-.\gradlew.bat build
+.\gradlew.bat jar
 ```
-Die fertige JAR befindet sich anschließend direkt im Projektordner:
-- `NoBlitz-1.0.0.jar`
+The compiled JAR will be located at:
 - `build/libs/NoBlitz-1.0.0.jar`

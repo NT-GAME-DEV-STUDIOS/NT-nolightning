@@ -6,6 +6,10 @@
 # Master switch for the plugin
 enabled: true
 
+# Language setting: "en" (English) or "de" (German)
+# Can also be changed in-game via /noblitz lang <en|de>
+language: en
+
 # Enable debug messages in server console
 debug: false
 
