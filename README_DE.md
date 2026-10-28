@@ -6,7 +6,6 @@
 [![Minecraft: 1.8.8 - 1.21.4+](https://img.shields.io/badge/Minecraft-1.8.8--1.21.4%2B-brightgreen.svg)](#)
 [![Java: 8+](https://img.shields.io/badge/Java-8%2B-red.svg)](#)
 [![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C.svg?logo=paypal&logoColor=white)](https://paypal.me/niktrick)
-[![Support on Ko-fi](https://img.shields.io/badge/Support-Ko--fi-FF5E5B.svg?logo=kofi&logoColor=white)](https://ko-fi.com/niktrick)
 
 [🇬🇧 Switch to English Version](README.md) | [🇩🇪 Deutsche Version](README_DE.md)
 
@@ -119,5 +118,4 @@ Die fertige JAR befindet sich im Projektordner:
 
 Wenn dir dieses Plugin auf deinem Server hilft, freuen wir uns über jede freiwillige Unterstützung für zukünftige Updates und Wartung:
 - [PayPal Spende](https://paypal.me/niktrick)
-- [Ko-fi Support](https://ko-fi.com/niktrick)
 - Alle Spenden sind freiwillig und fließen direkt in die Weiterentwicklung und Versionskompatibilität!

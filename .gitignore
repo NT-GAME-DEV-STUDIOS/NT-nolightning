@@ -12,4 +12,6 @@ bin/
 .env*
 *.key
 *.pem
+*.jar
+*.log
 
