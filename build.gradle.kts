@@ -38,7 +38,7 @@ tasks.processResources {
 }
 
 tasks.jar {
-    archiveBaseName.set("NoBlitz")
+    archiveBaseName.set("NT-noblitz")
     archiveClassifier.set("")
     archiveVersion.set(project.version.toString())
 }

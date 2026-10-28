@@ -1,1 +1,1 @@
-rootProject.name = "NoBlitz"
+rootProject.name = "NT-noblitz"

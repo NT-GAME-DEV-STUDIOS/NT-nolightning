@@ -1,4 +1,4 @@
-# NoBlitz ⚡ - Minecraft Plugin
+# NT-noblitz ⚡ - Minecraft Plugin
 
 [🇬🇧 Switch to English Version](README.md) | [🇩🇪 Deutsche Version](README_DE.md)
 
