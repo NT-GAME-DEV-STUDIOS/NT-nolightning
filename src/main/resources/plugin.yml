@@ -1,7 +1,6 @@
 name: NoBlitz
 version: '${version}'
 main: de.noblitz.NoBlitzPlugin
-api-version: '1.21'
 author: Antigravity
 description: High-performance, customizable lightning and thunderstorm protection plugin for Minecraft.
 website: https://github.com/noblitz

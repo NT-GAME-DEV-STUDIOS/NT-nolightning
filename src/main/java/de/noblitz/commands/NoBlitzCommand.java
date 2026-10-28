@@ -12,6 +12,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -38,21 +39,34 @@ public class NoBlitzCommand implements TabExecutor {
         String sub = args[0].toLowerCase(Locale.ROOT);
 
         switch (sub) {
-            case "status" -> handleStatus(sender);
-            case "reload" -> handleReload(sender);
-            case "toggle" -> handleToggle(sender, args);
-            case "strike" -> handleStrike(sender, args);
-            case "clearthunder", "clear" -> handleClearThunder(sender, args);
-            case "resetstats" -> handleResetStats(sender);
-            default -> {
+            case "status":
+                handleStatus(sender);
+                break;
+            case "reload":
+                handleReload(sender);
+                break;
+            case "toggle":
+                handleToggle(sender, args);
+                break;
+            case "strike":
+                handleStrike(sender, args);
+                break;
+            case "clearthunder":
+            case "clear":
+                handleClearThunder(sender, args);
+                break;
+            case "resetstats":
+                handleResetStats(sender);
+                break;
+            default:
                 MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cUnbekannter Befehl. Nutze &e/" + label + " help &cfür Hilfe.");
-            }
+                break;
         }
         return true;
     }
 
     private void sendHelp(CommandSender sender, String label) {
-        MessageUtils.send(sender, "&8&m-----------------&r &bNoBlitz &8v" + plugin.getPluginMeta().getVersion() + " &8&m-----------------");
+        MessageUtils.send(sender, "&8&m-----------------&r &bNoBlitz &8v" + plugin.getDescription().getVersion() + " &8&m-----------------");
         MessageUtils.send(sender, "&b/" + label + " help &7- Zeigt diese Hilfeseite");
         MessageUtils.send(sender, "&b/" + label + " status &7- Zeigt Plugin-Status und Statistiken");
         if (sender.hasPermission("noblitz.reload")) {
@@ -79,7 +93,7 @@ public class NoBlitzCommand implements TabExecutor {
             return;
         }
 
-        World senderWorld = (sender instanceof Player p) ? p.getWorld() : Bukkit.getWorlds().get(0);
+        World senderWorld = (sender instanceof Player) ? ((Player) sender).getWorld() : Bukkit.getWorlds().get(0);
         boolean isProtected = config.isWorldProtected(senderWorld);
 
         MessageUtils.send(sender, config.getMessage("status-header", "&8=== &bNoBlitz Status &8==="));
@@ -137,8 +151,8 @@ public class NoBlitzCommand implements TabExecutor {
                 MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cWelt &e" + args[1] + " &cwurde nicht gefunden!");
                 return;
             }
-        } else if (sender instanceof Player p) {
-            targetWorld = p.getWorld();
+        } else if (sender instanceof Player) {
+            targetWorld = ((Player) sender).getWorld();
         } else {
             MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cBitte gib eine Welt an: /noblitz toggle <welt>");
             return;
@@ -201,8 +215,8 @@ public class NoBlitzCommand implements TabExecutor {
                 MessageUtils.sendPrefixed(sender, config.getPrefix(), "&cWelt &e" + args[1] + " &cwurde nicht gefunden!");
                 return;
             }
-        } else if (sender instanceof Player p) {
-            targetWorld = p.getWorld();
+        } else if (sender instanceof Player) {
+            targetWorld = ((Player) sender).getWorld();
         } else {
             targetWorld = Bukkit.getWorlds().get(0);
         }
@@ -266,7 +280,7 @@ public class NoBlitzCommand implements TabExecutor {
         }
 
         if (args.length == 3 && args[0].equalsIgnoreCase("strike") && sender.hasPermission("noblitz.strike")) {
-            return filterStartingWith(args[2], List.of("true", "false"));
+            return filterStartingWith(args[2], Arrays.asList("true", "false"));
         }
 
         return Collections.emptyList();

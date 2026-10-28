@@ -3,6 +3,7 @@ package de.noblitz;
 import de.noblitz.commands.NoBlitzCommand;
 import de.noblitz.config.ConfigManager;
 import de.noblitz.listeners.LightningListener;
+import de.noblitz.listeners.ModernTransformListener;
 import de.noblitz.stats.StatsManager;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,8 +24,19 @@ public class NoBlitzPlugin extends JavaPlugin {
         this.configManager = new ConfigManager(this);
         this.configManager.load();
 
-        // Register event listener
+        // Register core event listener (compatible with 1.8 through 1.21.4+)
         getServer().getPluginManager().registerEvents(new LightningListener(this), this);
+
+        // Register modern transform listener if 1.14+ EntityTransformEvent is supported on this server
+        try {
+            Class.forName("org.bukkit.event.entity.EntityTransformEvent");
+            getServer().getPluginManager().registerEvents(new ModernTransformListener(this), this);
+            if (configManager.isDebug()) {
+                getLogger().info("[Debug] Modern EntityTransformEvent registered (Minecraft 1.14+).");
+            }
+        } catch (Throwable ignored) {
+            // Server is Minecraft 1.8 - 1.13: PigZapEvent and CreeperPowerEvent handle conversions safely
+        }
 
         // Register command
         PluginCommand cmd = getCommand("noblitz");
@@ -37,15 +49,15 @@ public class NoBlitzPlugin extends JavaPlugin {
         }
 
         getLogger().info("=========================================");
-        getLogger().info(" NoBlitz v" + getPluginMeta().getVersion() + " wurde erfolgreich aktiviert!");
-        getLogger().info(" Blitz- & Gewitterschutz ist aktiv.");
+        getLogger().info(" NoBlitz v" + getDescription().getVersion() + " wurde erfolgreich aktiviert!");
+        getLogger().info(" Blitz- & Gewitterschutz ist aktiv (1.8 - 1.21.4+).");
         getLogger().info(" Modus: " + configManager.getWorldMode());
         getLogger().info("=========================================");
     }
 
     @Override
     public void onDisable() {
-        getLogger().info("NoBlitz v" + getPluginMeta().getVersion() + " wurde deaktiviert. Auf Wiedersehen!");
+        getLogger().info("NoBlitz v" + getDescription().getVersion() + " wurde deaktiviert. Auf Wiedersehen!");
         instance = null;
     }
 

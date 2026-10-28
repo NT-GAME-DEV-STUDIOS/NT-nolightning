@@ -3,7 +3,6 @@ package de.noblitz.config;
 import de.noblitz.NoBlitzPlugin;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.weather.LightningStrikeEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,7 +21,7 @@ public class ConfigManager {
     private boolean debug;
 
     private boolean cancelAllLightning;
-    private final Map<LightningStrikeEvent.Cause, Boolean> causeFilters = new EnumMap<>(LightningStrikeEvent.Cause.class);
+    private final Map<String, Boolean> causeFilters = new HashMap<>();
     private boolean visualOnly;
 
     private boolean preventFire;
@@ -58,10 +57,10 @@ public class ConfigManager {
         this.visualOnly = config.getBoolean("strike-rules.visual-only", false);
 
         causeFilters.clear();
-        causeFilters.put(LightningStrikeEvent.Cause.WEATHER, config.getBoolean("strike-rules.cancel-causes.weather", true));
-        causeFilters.put(LightningStrikeEvent.Cause.TRIDENT, config.getBoolean("strike-rules.cancel-causes.trident", false));
-        causeFilters.put(LightningStrikeEvent.Cause.COMMAND, config.getBoolean("strike-rules.cancel-causes.command", false));
-        causeFilters.put(LightningStrikeEvent.Cause.CUSTOM, config.getBoolean("strike-rules.cancel-causes.custom", false));
+        causeFilters.put("WEATHER", config.getBoolean("strike-rules.cancel-causes.weather", true));
+        causeFilters.put("TRIDENT", config.getBoolean("strike-rules.cancel-causes.trident", false));
+        causeFilters.put("COMMAND", config.getBoolean("strike-rules.cancel-causes.command", false));
+        causeFilters.put("CUSTOM", config.getBoolean("strike-rules.cancel-causes.custom", false));
 
         // Protections
         this.preventFire = config.getBoolean("protection.prevent-fire", true);
@@ -110,11 +109,16 @@ public class ConfigManager {
             return override;
         }
 
-        return switch (worldMode) {
-            case ALL -> true;
-            case WHITELIST -> configuredWorlds.contains(worldName);
-            case BLACKLIST -> !configuredWorlds.contains(worldName);
-        };
+        switch (worldMode) {
+            case ALL:
+                return true;
+            case WHITELIST:
+                return configuredWorlds.contains(worldName);
+            case BLACKLIST:
+                return !configuredWorlds.contains(worldName);
+            default:
+                return true;
+        }
     }
 
     public boolean toggleWorld(String worldName) {
@@ -123,33 +127,39 @@ public class ConfigManager {
         if (runtimeOverrides.containsKey(key)) {
             current = runtimeOverrides.get(key);
         } else {
-            current = switch (worldMode) {
-                case ALL -> true;
-                case WHITELIST -> configuredWorlds.contains(key);
-                case BLACKLIST -> !configuredWorlds.contains(key);
-            };
+            switch (worldMode) {
+                case ALL:
+                    current = true;
+                    break;
+                case WHITELIST:
+                    current = configuredWorlds.contains(key);
+                    break;
+                case BLACKLIST:
+                    current = !configuredWorlds.contains(key);
+                    break;
+                default:
+                    current = true;
+                    break;
+            }
         }
         boolean newState = !current;
         runtimeOverrides.put(key, newState);
         return newState;
     }
 
-    public boolean isCancelCause(LightningStrikeEvent.Cause cause) {
+    public boolean isCancelCause(String cause) {
         if (cancelAllLightning) {
             return true;
         }
         if (cause == null) {
             return true;
         }
-        return causeFilters.getOrDefault(cause, false);
+        Boolean val = causeFilters.get(cause.toUpperCase(Locale.ROOT));
+        return val != null ? val : false;
     }
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public boolean isDebug() {
@@ -196,15 +206,15 @@ public class ConfigManager {
         return worldMode;
     }
 
+    public Set<String> getConfiguredWorlds() {
+        return Collections.unmodifiableSet(configuredWorlds);
+    }
+
     public String getPrefix() {
         return prefix;
     }
 
     public String getMessage(String key, String def) {
         return messages.getOrDefault(key, def);
-    }
-
-    public Map<String, Boolean> getRuntimeOverrides() {
-        return runtimeOverrides;
     }
 }

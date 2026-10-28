@@ -12,11 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.entity.CreeperPowerEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.entity.PigZapEvent;
 import org.bukkit.event.weather.LightningStrikeEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+
+import java.lang.reflect.Method;
 
 public class LightningListener implements Listener {
 
@@ -24,10 +25,48 @@ public class LightningListener implements Listener {
     private final ConfigManager config;
     private final StatsManager stats;
 
+    private static Method getCauseMethod;
+    private static Method setSilentMethod;
+    private static boolean reflectionInitialized = false;
+
     public LightningListener(NoBlitzPlugin plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfigManager();
         this.stats = plugin.getStatsManager();
+        initReflection();
+    }
+
+    private static synchronized void initReflection() {
+        if (reflectionInitialized) return;
+        try {
+            getCauseMethod = LightningStrikeEvent.class.getMethod("getCause");
+        } catch (Throwable ignored) {}
+
+        try {
+            setSilentMethod = LightningStrike.class.getMethod("setSilent", boolean.class);
+        } catch (Throwable ignored) {}
+
+        reflectionInitialized = true;
+    }
+
+    private String getStrikeCause(LightningStrikeEvent event) {
+        if (getCauseMethod != null) {
+            try {
+                Object causeObj = getCauseMethod.invoke(event);
+                if (causeObj != null) {
+                    return causeObj.toString();
+                }
+            } catch (Throwable ignored) {}
+        }
+        return "WEATHER";
+    }
+
+    private void trySetSilent(LightningStrike strike) {
+        if (setSilentMethod != null) {
+            try {
+                setSilentMethod.invoke(strike, true);
+            } catch (Throwable ignored) {}
+        }
     }
 
     /**
@@ -41,10 +80,10 @@ public class LightningListener implements Listener {
         }
 
         LightningStrike lightning = event.getLightning();
-        LightningStrikeEvent.Cause cause = event.getCause();
+        String cause = getStrikeCause(event);
 
         if (config.isMuteSound()) {
-            lightning.setSilent(true);
+            trySetSilent(lightning);
         }
 
         if (config.isCancelCause(cause)) {
@@ -95,7 +134,7 @@ public class LightningListener implements Listener {
                 return;
             }
 
-            boolean isItem = (entity instanceof Item || entity instanceof ItemFrame || entity instanceof GlowItemFrame);
+            boolean isItem = (entity instanceof Item || entity instanceof ItemFrame || entity.getClass().getSimpleName().equals("GlowItemFrame"));
 
             if (isItem && config.isPreventItemDestruction()) {
                 event.setCancelled(true);
@@ -131,24 +170,7 @@ public class LightningListener implements Listener {
     }
 
     /**
-     * Prevent entities from transforming when struck by lightning (Villager -> Witch, Mooshroom, etc.).
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onEntityTransform(EntityTransformEvent event) {
-        if (event.getTransformReason() == EntityTransformEvent.TransformReason.LIGHTNING) {
-            World world = event.getEntity().getWorld();
-            if (config.isWorldProtected(world) && config.isPreventMobTransformations()) {
-                event.setCancelled(true);
-                stats.incrementPreventedTransformations();
-                if (config.isDebug()) {
-                    plugin.getLogger().info("[Debug] Prevented entity transformation for " + event.getEntity().getType() + " at " + event.getEntity().getLocation());
-                }
-            }
-        }
-    }
-
-    /**
-     * Prevent Pig from turning into a Zombified Piglin.
+     * Prevent Pig from turning into a PigZombie / Zombified Piglin.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPigZap(PigZapEvent event) {
