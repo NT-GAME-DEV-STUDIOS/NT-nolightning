@@ -7,3 +7,9 @@ bin/
 *.iws
 .settings/
 *.class
+
+*.env
+.env*
+*.key
+*.pem
+
